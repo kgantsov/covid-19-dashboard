@@ -189,7 +189,7 @@ app.layout = html.Div(className="layout", children=[
     [Input('country-dropdown', 'value'),
      Input('type-radio', 'value'),
      Input('dates-range-slider', 'value')])
-def update_graph(countries, _type, dates_range):
+def update_new_stats_graph(countries, _type, dates_range):
     country_total = covid19.get_history_data(
         countries=countries,
         _type=_type,
@@ -224,7 +224,7 @@ def update_graph(countries, _type, dates_range):
     [Input('country-dropdown', 'value'),
      Input('type-radio', 'value'),
      Input('dates-range-slider', 'value')])
-def update_graph1(countries, _type, dates_range):
+def update_total_stats_graph(countries, _type, dates_range):
     country_total = covid19.get_history_data(
         countries=countries,
         _type=_type,
