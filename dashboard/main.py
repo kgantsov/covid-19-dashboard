@@ -59,74 +59,29 @@ app.layout = html.Div(className="layout", children=[
     ]),
 
     html.Div(className="row", children=[
-        html.Div(id='rates-by-country-container', className="chart-container six columns", style={'backgroundColor': colors['background']}, children=[
-            html.H1(
-                children='Hello Dash',
-                style={
-                    'textAlign': 'center',
-                    'color': colors['text']
-                }
-            ),
+        html.Div(
+            id='rates-by-country-container',
+            className="chart-container six columns",
+            style={'backgroundColor': colors['background']},
+            children=[]
+        ),
 
-            html.Div(children='Dash: A web application framework for Python.', style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }),
-
-            dcc.Graph(
-                id='rates-by-country',
-                figure={
-                    'data': [],
-                    'layout': {
-                        # 'xaxis': {'title': 'Dates'},
-                        # 'yaxis': {'title': 'Sick people', 'type': 'log'},
-                        # 'yaxis': {'title': 'Sick people'},
-                        'plot_bgcolor': colors['background'],
-                        'paper_bgcolor': colors['background'],
-                        'font': {
-                            'color': colors['text']
-                        }
-                    }
-                }
-            )
-        ]),
-
-        html.Div(id='new-by-country-container', className="chart-container six columns", style={'backgroundColor': colors['background']}, children=[
-            html.H1(
-                children='Hello Dash',
-                style={
-                    'textAlign': 'center',
-                    'color': colors['text']
-                }
-            ),
-
-            html.Div(children='Dash: A web application framework for Python.', style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }),
-
-            dcc.Graph(
-                id='new-by-country',
-                figure={
-                    'data': [],
-                    'layout': {
-                        'xaxis': {'title': 'Dates'},
-                        # 'yaxis': {'title': 'Sick people', 'type': 'log'},
-                        'yaxis': {'title': 'Number of people'},
-                        'plot_bgcolor': colors['background'],
-                        'paper_bgcolor': colors['background'],
-                        'font': {
-                            'color': colors['text']
-                        }
-                    }
-                }
-            )
-        ]),
+        html.Div(
+            id='new-by-country-container',
+            className="chart-container six columns",
+            style={'backgroundColor': colors['background']},
+            children=[]
+        ),
 
     ]),
 
     html.Div(className="row", children=[
-        html.Div(id='by-country-container', className="chart-container twelve columns", style={'backgroundColor': colors['background']}, children=[]),
+        html.Div(
+            id='by-country-container',
+            className="chart-container twelve columns",
+            style={'backgroundColor': colors['background']},
+            children=[]
+        ),
     ]),
 ])
 
@@ -240,12 +195,8 @@ def update_total_stats_graph(countries, _type, dates_range):
     Output('rates-by-country-container', 'children'),
     [Input('country-dropdown', 'value'),
      Input('type-radio', 'value'),])
-def update_total_stats_graph(countries, _type):
+def update_rates_stats_graph(countries, _type):
     data = covid19.get_rate_by_countries(countries, _type)
-
-    # print('-' * 100)
-    # print(data)
-    # print('-' * 100)
 
     return [
             html.H1(
@@ -256,10 +207,13 @@ def update_total_stats_graph(countries, _type):
                 }
             ),
 
-            # html.Div(children='Dash: A web application framework for Python.', style={
-            #     'textAlign': 'center',
-            #     'color': colors['text']
-            # }),
+            # html.Div(
+            #     children=f'{_type.title()} rate per 1 mullion people',
+            #     style={
+            #         'textAlign': 'center',
+            #         'color': colors['text']
+            #     }
+            # ),
 
             dcc.Graph(
                 id='rates-by-country',
