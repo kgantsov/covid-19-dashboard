@@ -1,0 +1,3 @@
+COVID19Py==0.3.0
+dash==1.10.0
+requests==2.23.0
