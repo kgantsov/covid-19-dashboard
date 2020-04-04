@@ -38,6 +38,7 @@ app.layout = html.Div(className="layout", children=[
             ),
             dcc.RadioItems(
                 id='type-radio',
+                className='radio-buttons',
                 options=[
                     {'label': 'Confirmed', 'value': 'confirmed'},
                     {'label': 'Died', 'value': 'deaths'},
@@ -58,7 +59,7 @@ app.layout = html.Div(className="layout", children=[
     ]),
 
     html.Div(className="row", children=[
-        html.Div(className="chart-container six columns", style={'backgroundColor': colors['background']}, children=[
+        html.Div(id='rates-by-country-container', className="chart-container six columns", style={'backgroundColor': colors['background']}, children=[
             html.H1(
                 children='Hello Dash',
                 style={
@@ -73,28 +74,9 @@ app.layout = html.Div(className="layout", children=[
             }),
 
             dcc.Graph(
-                id='example-graph-1',
+                id='rates-by-country',
                 figure={
-                    'data': [
-                        {
-                            'x': [x[0] for x in covid19.latest_top],
-                            'y': [x[1]['confirmed'] for x in covid19.latest_top],
-                            'type': 'bar',
-                            'name': 'confirmed'
-                        },
-                        {
-                            'x': [x[0] for x in covid19.latest_top],
-                            'y': [x[1]['deaths'] for x in covid19.latest_top],
-                            'type': 'bar',
-                            'name': 'deaths'
-                        },
-                        {
-                            'x': [x[0] for x in covid19.latest_top],
-                            'y': [x[1]['recovered'] for x in covid19.latest_top],
-                            'type': 'bar',
-                            'name': 'recovered'
-                        },
-                    ],
+                    'data': [],
                     'layout': {
                         # 'xaxis': {'title': 'Dates'},
                         # 'yaxis': {'title': 'Sick people', 'type': 'log'},
@@ -109,7 +91,7 @@ app.layout = html.Div(className="layout", children=[
             )
         ]),
 
-        html.Div(className="chart-container six columns", style={'backgroundColor': colors['background']}, children=[
+        html.Div(id='new-by-country-container', className="chart-container six columns", style={'backgroundColor': colors['background']}, children=[
             html.H1(
                 children='Hello Dash',
                 style={
@@ -126,26 +108,7 @@ app.layout = html.Div(className="layout", children=[
             dcc.Graph(
                 id='new-by-country',
                 figure={
-                    'data': [
-                        # {
-                        #     'x': list(covid19.locations_map['UA']['timelines']['confirmed']['timeline'].keys()),
-                        #     'y': list(covid19.locations_map['UA']['timelines']['confirmed']['timeline'].values()),
-                        #     'type': 'bar',
-                        #     'name': 'Ukraine'
-                        # },
-                        # {
-                        #     'x': list(covid19.locations_map['SE']['timelines']['confirmed']['timeline'].keys()),
-                        #     'y': list(covid19.locations_map['SE']['timelines']['confirmed']['timeline'].values()),
-                        #     'type': 'bar',
-                        #     'name': 'Sweden'
-                        # },
-                        # {
-                        #     'x': list(covid19.locations_map['IT']['timelines']['confirmed']['timeline'].keys()),
-                        #     'y': list(covid19.locations_map['IT']['timelines']['confirmed']['timeline'].values()),
-                        #     'type': 'bar',
-                        #     'name': 'Italy'
-                        # },
-                    ],
+                    'data': [],
                     'layout': {
                         'xaxis': {'title': 'Dates'},
                         # 'yaxis': {'title': 'Sick people', 'type': 'log'},
@@ -163,29 +126,12 @@ app.layout = html.Div(className="layout", children=[
     ]),
 
     html.Div(className="row", children=[
-        html.Div(className="chart-container twelve columns", style={'backgroundColor': colors['background']}, children=[
-            dcc.Graph(
-                id='by-country',
-                figure={
-                    'data': [],
-                    'layout': {
-                        'xaxis': {'title': 'Dates'},
-                        # 'yaxis': {'title': 'Sick people', 'type': 'log'},
-                        'yaxis': {'title': 'Sick people'},
-                        'plot_bgcolor': colors['background'],
-                        'paper_bgcolor': colors['background'],
-                        'font': {
-                            'color': colors['text']
-                        }
-                    }
-                }
-            ),
-        ]),
+        html.Div(id='by-country-container', className="chart-container twelve columns", style={'backgroundColor': colors['background']}, children=[]),
     ]),
 ])
 
 @app.callback(
-    Output('by-country', 'figure'),
+    Output('by-country-container', 'children'),
     [Input('country-dropdown', 'value'),
      Input('type-radio', 'value'),
      Input('dates-range-slider', 'value')])
@@ -197,30 +143,48 @@ def update_new_stats_graph(countries, _type, dates_range):
         end=dates_range[1] + 1, 
     )
 
-    return {
-        'data': [
-            {
-                'x': list(data.keys()),
-                'y': [x[_type] for x in data.values()],
-                'type': 'line',
-                'name': covid19.countries_map[c]
-            } for c, data in country_total.items()
-        ],
-        'layout': {
-            'yaxis': {'title': _type.title() if _type else ''},
-            # 'yaxis': {'title': 'Sick people', 'type': 'log'},
-            # 'yaxis': {'title': },
-            'plot_bgcolor': colors['background'],
-            'paper_bgcolor': colors['background'],
-            'font': {
+    return [
+        html.H1(
+            children=f'Total {_type.title()} cases',
+            style={
+                'textAlign': 'center',
                 'color': colors['text']
             }
-        }
-    }
+        ),
+
+        # html.Div(children='Dash: A web application framework for Python.', style={
+        #     'textAlign': 'center',
+        #     'color': colors['text']
+        # }),
+
+        dcc.Graph(
+            id='by-country',
+            figure={
+                'data': [
+                    {
+                        'x': list(data.keys()),
+                        'y': [x[_type] for x in data.values()],
+                        'type': 'line',
+                        'name': covid19.countries_map[c]
+                    } for c, data in country_total.items()
+                ],
+                'layout': {
+                    # 'yaxis': {'title': _type.title() if _type else ''},
+                    # 'yaxis': {'title': 'Sick people', 'type': 'log'},
+                    # 'yaxis': {'title': },
+                    'plot_bgcolor': colors['background'],
+                    'paper_bgcolor': colors['background'],
+                    'font': {
+                        'color': colors['text']
+                    }
+                }
+            }
+        ),
+    ]
 
 
 @app.callback(
-    Output('new-by-country', 'figure'),
+    Output('new-by-country-container', 'children'),
     [Input('country-dropdown', 'value'),
      Input('type-radio', 'value'),
      Input('dates-range-slider', 'value')])
@@ -232,26 +196,95 @@ def update_total_stats_graph(countries, _type, dates_range):
         end=dates_range[1] + 1, 
     )
 
-    return {
-        'data': [
-            {
-                'x': list(data.keys()),
-                'y': [x[_type + '_new'] for x in data.values()],
-                'type': 'line',
-                'name': covid19.countries_map[c]
-            } for c, data in country_total.items()
-        ],
-        'layout': {
-            'yaxis': {'title': _type.title() if _type else ''},
-            # 'yaxis': {'title': 'Sick people', 'type': 'log'},
-            # 'yaxis': {'title': },
-            'plot_bgcolor': colors['background'],
-            'paper_bgcolor': colors['background'],
-            'font': {
-                'color': colors['text']
-            }
-        }
-    }
+    return [
+            html.H1(
+                children=f'New {_type} cases',
+                style={
+                    'textAlign': 'center',
+                    'color': colors['text']
+                }
+            ),
+
+            # html.Div(children='Dash: A web application framework for Python.', style={
+            #     'textAlign': 'center',
+            #     'color': colors['text']
+            # }),
+
+            dcc.Graph(
+                id='new-by-country',
+                figure={
+                    'data': [
+                        {
+                            'x': list(data.keys()),
+                            'y': [x[_type + '_new'] for x in data.values()],
+                            'type': 'line',
+                            'name': covid19.countries_map[c]
+                        } for c, data in country_total.items()
+                    ],
+                    'layout': {
+                        # 'yaxis': {'title': _type.title() if _type else ''},
+                        # 'yaxis': {'title': 'Sick people', 'type': 'log'},
+                        # 'yaxis': {'title': },
+                        'plot_bgcolor': colors['background'],
+                        'paper_bgcolor': colors['background'],
+                        'font': {
+                            'color': colors['text']
+                        }
+                    }
+                }
+            )
+        ]
+
+
+@app.callback(
+    Output('rates-by-country-container', 'children'),
+    [Input('country-dropdown', 'value'),
+     Input('type-radio', 'value'),])
+def update_total_stats_graph(countries, _type):
+    data = covid19.get_rate_by_countries(countries, _type)
+
+    # print('-' * 100)
+    # print(data)
+    # print('-' * 100)
+
+    return [
+            html.H1(
+                children=f'{_type.title()} rate',
+                style={
+                    'textAlign': 'center',
+                    'color': colors['text']
+                }
+            ),
+
+            # html.Div(children='Dash: A web application framework for Python.', style={
+            #     'textAlign': 'center',
+            #     'color': colors['text']
+            # }),
+
+            dcc.Graph(
+                id='rates-by-country',
+                figure={
+                    'data': [
+                        {
+                            'x': [covid19.countries_map[x['country']] for x in data],
+                            'y': [x['rate'] for x in data],
+                            'type': 'bar',
+                            'name': 'Death date'
+                        }
+                    ],
+                    'layout': {
+                        # 'yaxis': {'title': _type.title() if _type else ''},
+                        # 'yaxis': {'title': 'Sick people', 'type': 'log'},
+                        # 'yaxis': {'title': },
+                        'plot_bgcolor': colors['background'],
+                        'paper_bgcolor': colors['background'],
+                        'font': {
+                            'color': colors['text']
+                        }
+                    }
+                }
+            )
+        ]
 
 if __name__ == '__main__':
     # http://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=UA&timelines=true

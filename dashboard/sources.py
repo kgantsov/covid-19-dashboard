@@ -1,3 +1,6 @@
+import json
+import math
+
 from collections import defaultdict
 from datetime import datetime
 
@@ -11,6 +14,15 @@ class Covid19Data:
         self.covid19 = COVID19Py.COVID19()
 
         self.refresh_data()
+
+        self.population_map = {
+            x['country']: x['population']
+            for x in json.load(open('country-by-population.json'))
+        }
+        self.country_country_code_map = {
+            x['abbreviation']: x['country']
+            for x in json.load(open('country-by-abbreviation.json'))
+        }
     
     def process_data(self):
         self.countries_map = {}
@@ -52,15 +64,17 @@ class Covid19Data:
                         if i > 0:
                             today = cnt
                             yesterday = items[i - 1][1]
-                            
-                            # print('----->', items[i - 1][0], yesterday, date, today, today - yesterday)
-
                             country_total[location['country_code']][date][key + '_new'] += today - yesterday
 
-
-
-            from pprint import pprint
-            pprint('<=====')
-            pprint(country_total[country].items())
-            pprint('=====>')
         return country_total
+    
+    def get_rate_by_countries(self, countries, _type):
+        data = []
+        for country in countries:
+            population = int(self.population_map[self.country_country_code_map[country]])
+            rate_per_mil = math.floor(1000000 / population *  self.total[country][_type])
+            data.append({'country': country, 'rate': rate_per_mil})
+        
+
+        data = sorted(data, key=lambda x: x['rate'])
+        return data
