@@ -72,9 +72,14 @@ class Covid19Data:
         data = []
         for country in countries:
             population = int(self.population_map[self.country_country_code_map[country]])
-            rate_per_mil = math.floor(1000000 / population *  self.total[country][_type])
+            # rate_per_mil = math.floor(1000000 / population *  self.total[country][_type])
+            rate_per_mil = self.calculate_rate(country, self.total[country][_type])
             data.append({'country': country, 'rate': rate_per_mil})
         
 
         data = sorted(data, key=lambda x: x['rate'])
         return data
+    
+    def calculate_rate(self, country_code, total,  per=1000000):
+        population = int(self.population_map[self.country_country_code_map[country_code]])
+        return math.floor(per / population *  total)
