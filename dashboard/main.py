@@ -13,7 +13,8 @@ from sources import Covid19Data
 covid19 = Covid19Data()
 
 external_stylesheets = [
-    'https://codepen.io/chriddyp/pen/bWLwgP.css', 'https://codepen.io/kgantsov/pen/jOPROez.css'
+    # 'https://codepen.io/chriddyp/pen/bWLwgP.css',
+    'https://codepen.io/kgantsov/pen/jOPROez.css'
 ]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -343,4 +344,4 @@ def update_rates_progress__stats_graph(countries, _type, dates_range):
 if __name__ == '__main__':
     # http://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=UA&timelines=true
     # https://github.com/samayo/country-json/blob/master/src/country-by-population.json
-    app.run_server(debug=True)
+    app.run_server(debug=False, host='0.0.0.0', port='8050')
