@@ -11,7 +11,7 @@ class Covid19Data:
     def __init__(self):
         self.total = defaultdict(lambda: defaultdict(int))
 
-        self.covid19 = COVID19Py.COVID19()
+        self.covid19 = COVID19Py.COVID19(url='http://api:8051')
 
         self.refresh_data()
 

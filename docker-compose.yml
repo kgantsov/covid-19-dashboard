@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  api:
+    build: ./api
+    command: uvicorn app.main:APP --host 0.0.0.0 --port 8051
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "8051:8051"
+    expose:
+      - "8051"
+
+  dashboard:
+    build: ./dashboard
+    command: gunicorn --bind 0.0.0.0:8050 main:server
+    depends_on:
+      - api
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "8050:8050"
+    expose:
+      - "8050"
+
+networks:
+  frontend:
+  backend:
