@@ -25,8 +25,6 @@ class Covid19Data:
         }
     
     def process_data(self):
-        self.refresh_data()
-
         self.countries_map = {}
         self.locations_map = {x['country_code']:x for x in self.locations}
 
