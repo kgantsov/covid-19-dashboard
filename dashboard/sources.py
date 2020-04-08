@@ -1,16 +1,24 @@
+import sys
+import time
 import json
 import math
+import logging
 
 from collections import defaultdict
 from datetime import datetime
 
 import COVID19Py
 
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+log = logging.getLogger(__name__)
+log.setLevel('INFO')
 
 class Covid19Data:
     def __init__(self):
         self.total = defaultdict(lambda: defaultdict(int))
 
+        self._last_time_updated = 0
+        self._update_every = 600
         self.covid19 = COVID19Py.COVID19(url='http://api:8051')
 
         self.refresh_data()
@@ -42,10 +50,18 @@ class Covid19Data:
 
 
     def refresh_data(self):
-        self.latest = self.covid19.getLatest()
-        self.locations = self.covid19.getLocations(timelines=True)
+        last_time_updated = time.time() - self._last_time_updated
 
-        self.process_data()
+        if last_time_updated > self._update_every:
+            log.debug('=====> LAST UPDATED %s seconds ago. Checking again...', last_time_updated)
+            self.latest = self.covid19.getLatest()
+            self.locations = self.covid19.getLocations(timelines=True)
+
+            self._last_time_updated = time.time()
+
+            self.process_data()
+        else:
+            log.debug('-----> LAST UPDATED %s seconds ago. Using cache...', last_time_updated)
     
     def get_history_data(self, countries, _type, start, end):
         self.refresh_data()
