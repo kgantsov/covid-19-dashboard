@@ -25,6 +25,8 @@ class Covid19Data:
         }
     
     def process_data(self):
+        self.refresh_data()
+
         self.countries_map = {}
         self.locations_map = {x['country_code']:x for x in self.locations}
 
@@ -48,6 +50,8 @@ class Covid19Data:
         self.process_data()
     
     def get_history_data(self, countries, _type, start, end):
+        self.refresh_data()
+
         country_total = defaultdict(lambda: defaultdict(lambda: defaultdict(int)))
 
         for country in countries:
@@ -69,6 +73,8 @@ class Covid19Data:
         return country_total
     
     def get_rate_by_countries(self, countries, _type):
+        self.refresh_data()
+
         data = []
         for country in countries:
             population = int(self.population_map[self.country_country_code_map[country]])
