@@ -245,7 +245,7 @@ def update_rates_stats_graph(countries, _type):
         ),
 
         html.Div(
-            children=f'Total number of people that {help_text} per 1 mullion people',
+            children=f'Total number of people that {help_text} per 1 million people',
             style={
                 'textAlign': 'center',
                 'color': colors['text']
@@ -309,7 +309,7 @@ def update_rates_progress__stats_graph(countries, _type, dates_range):
         ),
 
         html.Div(
-            children=f'Number of people that {help_text} per 1 mullion people on a specific day',
+            children=f'Number of people that {help_text} per 1 million people on a specific day',
             style={
                 'textAlign': 'center',
                 'color': colors['text']
