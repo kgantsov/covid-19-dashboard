@@ -14,7 +14,7 @@ covid19 = Covid19Data()
 
 external_stylesheets = [
     # 'https://codepen.io/chriddyp/pen/bWLwgP.css',
-    'https://codepen.io/kgantsov/pen/jOPROez.css'
+    'https://codepen.io/kgantsov/pen/jOPROez.css?v=3'
 ]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -29,7 +29,7 @@ colors = {
 app.layout = html.Div(className="layout", children=[
 
     html.Div(className="row", style={'backgroundColor': colors['background']}, children=[
-        html.Div(className="chart-container twelwe columns", style={'backgroundColor': colors['background']}, children=[
+        html.Div(className="twelwe columns", style={'backgroundColor': colors['background']}, children=[
             dcc.Dropdown(
                 id='country-dropdown',
                 options=[
@@ -64,14 +64,14 @@ app.layout = html.Div(className="layout", children=[
     html.Div(className="row", children=[
         html.Div(
             id='by-country-container',
-            className="chart-container six columns",
+            className="six columns",
             style={'backgroundColor': colors['background']},
             children=[]
         ),
 
         html.Div(
             id='new-by-country-container',
-            className="chart-container six columns",
+            className="six columns",
             style={'backgroundColor': colors['background']},
             children=[]
         ),
@@ -81,14 +81,14 @@ app.layout = html.Div(className="layout", children=[
     html.Div(className="row", children=[
         html.Div(
             id='rates-by-country-container',
-            className="chart-container six columns",
+            className="six columns",
             style={'backgroundColor': colors['background']},
             children=[]
         ),
 
         html.Div(
             id='rates-progress-by-country-container',
-            className="chart-container six columns",
+            className="six columns",
             style={'backgroundColor': colors['background']},
             children=[]
         ),
@@ -344,4 +344,4 @@ def update_rates_progress__stats_graph(countries, _type, dates_range):
 if __name__ == '__main__':
     # http://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=UA&timelines=true
     # https://github.com/samayo/country-json/blob/master/src/country-by-population.json
-    app.run_server(debug=False, host='0.0.0.0', port='8050')
+    app.run_server(debug=True, host='0.0.0.0', port='8050')
