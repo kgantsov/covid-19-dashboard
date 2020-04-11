@@ -45,7 +45,8 @@ app.layout = html.Div(className="layout", children=[
                 options=[
                     {'label': 'Confirmed', 'value': 'confirmed'},
                     {'label': 'Died', 'value': 'deaths'},
-                    {'label': 'Recovered', 'value': 'recovered'}],
+                    # {'label': 'Recovered', 'value': 'recovered'}
+                ],
                 value='confirmed',
             ),
             dcc.RangeSlider(
