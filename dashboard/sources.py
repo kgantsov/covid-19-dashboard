@@ -62,7 +62,12 @@ class Covid19Data:
             self.process_data()
         else:
             log.debug('-----> LAST UPDATED %s seconds ago. Using cache...', last_time_updated)
-    
+
+    def get_dates(self):
+        self.refresh_data()
+
+        return self.dates
+
     def get_history_data(self, countries, _type, start, end):
         self.refresh_data()
 
@@ -78,14 +83,14 @@ class Covid19Data:
                     # for date, cnt in items[start:end]:
                     for i, (date, cnt) in enumerate(items[start:end], start=start):
                         country_total[location['country_code']][date][key] += cnt
-                        
+
                         if i > 0:
                             today = cnt
                             yesterday = items[i - 1][1]
                             country_total[location['country_code']][date][key + '_new'] += today - yesterday
 
         return country_total
-    
+
     def get_rate_by_countries(self, countries, _type):
         self.refresh_data()
 
@@ -95,11 +100,10 @@ class Covid19Data:
             # rate_per_mil = math.floor(1000000 / population *  self.total[country][_type])
             rate_per_mil = self.calculate_rate(country, self.total[country][_type])
             data.append({'country': country, 'rate': rate_per_mil})
-        
 
         data = sorted(data, key=lambda x: x['rate'])
         return data
-    
+
     def calculate_rate(self, country_code, total,  per=1000000):
         population = int(self.population_map[self.country_country_code_map[country_code]])
         return math.floor(per / population *  total)

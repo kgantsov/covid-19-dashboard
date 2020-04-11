@@ -52,12 +52,12 @@ app.layout = html.Div(className="layout", children=[
             dcc.RangeSlider(
                 id='dates-range-slider',
                 min=0,
-                max=len(covid19.dates) - 1,
+                max=len(covid19.get_dates()) - 1,
                 marks={
                     i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
-                    for i, x in enumerate(covid19.dates) if i % 5 == 0
+                    for i, x in enumerate(covid19.get_dates()) if i % 5 == 0
                 },
-                value=[0, len(covid19.dates) - 1],
+                value=[0, len(covid19.get_dates()) - 1],
             ),
         ]),
     ]),
