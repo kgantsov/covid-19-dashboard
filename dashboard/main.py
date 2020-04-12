@@ -81,13 +81,6 @@ app.layout = html.Div(className="layout", children=[
 
     html.Div(className="row", children=[
         html.Div(
-            id='rates-by-country-container',
-            className="six columns",
-            style={'backgroundColor': colors['background']},
-            children=[]
-        ),
-
-        html.Div(
             id='rates-progress-by-country-container',
             className="six columns",
             style={'backgroundColor': colors['background']},
@@ -220,64 +213,6 @@ def update_new_stats_graph(countries, _type, dates_range):
             }
         )
     ]
-
-
-@app.callback(
-    Output('rates-by-country-container', 'children'),
-    [Input('country-dropdown', 'value'),
-     Input('type-radio', 'value'),])
-def update_rates_stats_graph(countries, _type):
-    data = covid19.get_rate_by_countries(countries, _type)
-
-    if _type == 'deaths':
-        help_text = 'died from COVID-19'
-    elif _type == 'confirmed':
-        help_text = 'confirmed with COVID-19'
-    elif _type == 'recovered':
-        help_text = 'fully recovered from COVID-19'
-
-    return [
-        html.H1(
-            children=f'{_type.title()} rate',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
-
-        html.Div(
-            children=f'Total number of people that {help_text} per 1 million people',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
-
-        dcc.Graph(
-            id='rates-by-country',
-            figure={
-                'data': [
-                    {
-                        'x': [covid19.countries_map[x['country']] for x in data],
-                        'y': [x['rate'] for x in data],
-                        'type': 'bar',
-                        'name': 'Death date'
-                    }
-                ],
-                'layout': {
-                    # 'yaxis': {'title': _type.title() if _type else ''},
-                    # 'yaxis': {'title': 'Sick people', 'type': 'log'},
-                    # 'yaxis': {'title': },
-                    'plot_bgcolor': colors['background'],
-                    'paper_bgcolor': colors['background'],
-                    'font': {
-                        'color': colors['text']
-                    }
-                }
-            }
-        )
-    ]
-
 
 
 @app.callback(
