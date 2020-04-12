@@ -18,8 +18,7 @@ class Covid19Data:
 
         self._last_time_updated = 0
         self._update_every = 600
-        self.covid19 = COVID19Py.COVID19(url='http://c19-stats.ml:8051')
-        # self.covid19 = COVID19Py.COVID19(url='http://api:8051')
+        self.covid19 = COVID19Py.COVID19(url='http://api:8051')
 
         self.refresh_data()
 
