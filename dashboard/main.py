@@ -69,14 +69,15 @@ app.layout = html.Div(className="layout", children=[
             style={'backgroundColor': colors['background']},
             children=[]
         ),
+    ]),
 
+    html.Div(className="row", children=[
         html.Div(
             id='new-by-country-container',
             className="six columns",
             style={'backgroundColor': colors['background']},
             children=[]
         ),
-
     ]),
 
     html.Div(className="row", children=[
