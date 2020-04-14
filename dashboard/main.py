@@ -1,3 +1,5 @@
+import logging
+import sys
 from collections import defaultdict
 from datetime import datetime
 
@@ -9,6 +11,9 @@ from dash.dependencies import Input
 from dash.dependencies import Output
 
 from sources import Covid19Data
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+log = logging.getLogger(__name__)
 
 covid19 = Covid19Data()
 
@@ -58,7 +63,7 @@ app.layout = html.Div(className="layout", children=[
                     for i, x in enumerate(covid19.get_dates()) if i % 5 == 0
                 },
                 value=[0, len(covid19.get_dates()) - 1],
-            ),
+            )
         ]),
     ]),
 
@@ -89,6 +94,43 @@ app.layout = html.Div(className="layout", children=[
         ),
     ]),
 ])
+
+
+@app.callback(
+    Output('country-dropdown', 'options'),
+    [Input('country-dropdown', 'value')])
+def set_countries_options(countries):
+    log.debug(',,,,,,,,,,,,,,,,,,,,,, UPDATING OPTIONS')
+    return [
+        {'label': covid19.countries_map[x[0]], 'value': x[0]}
+        for x in covid19.latest_total[::-1]
+    ]
+
+
+@app.callback(
+    Output('dates-range-slider', 'max'),
+    [Input('country-dropdown', 'value')])
+def set_date_range_max(countries):
+    log.debug('!!!!!!!!!!!!!!!!!!! UPDATING MAX')
+    return len(covid19.get_dates()) - 1
+
+@app.callback(
+    Output('dates-range-slider', 'marks'),
+    [Input('country-dropdown', 'value')])
+def set_date_range_marks(countries):
+    log.debug('§§§§§§§§§§§§§§§§§§§ UPDATING MARKS')
+    return {
+        i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
+        for i, x in enumerate(covid19.get_dates()) if i % 5 == 0
+    }
+
+@app.callback(
+    Output('dates-range-slider', 'value'),
+    [Input('country-dropdown', 'value')])
+def set_date_range_value(countries):
+    log.debug('@@@@@@@@@@@@@@@@@@@ UPDATING VALUE')
+    return [0, len(covid19.get_dates()) - 1]
+
 
 @app.callback(
     Output('by-country-container', 'children'),
