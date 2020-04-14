@@ -1,5 +1,6 @@
 import logging
 import sys
+import uuid
 from collections import defaultdict
 from datetime import datetime
 
@@ -9,6 +10,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input
 from dash.dependencies import Output
+from flask import request
 
 from sources import Covid19Data
 
@@ -31,80 +33,90 @@ colors = {
     'text': '#7FDBFF'
 }
 
-app.layout = html.Div(className="layout", children=[
 
-    html.Div(className="row", style={'backgroundColor': colors['background']}, children=[
-        html.Div(className="twelwe columns", style={'backgroundColor': colors['background']}, children=[
-            dcc.Dropdown(
-                id='country-dropdown',
-                options=[
-                    {'label': covid19.countries_map[x[0]], 'value': x[0]}
-                    for x in covid19.latest_total[::-1]
-                ],
-                value=[x[0] for x in covid19.latest_top[-5:]],
-                multi=True
-            ),
-            dcc.RadioItems(
-                id='type-radio',
-                className='radio-buttons',
-                options=[
-                    {'label': 'Confirmed', 'value': 'confirmed'},
-                    {'label': 'Died', 'value': 'deaths'},
-                    # {'label': 'Recovered', 'value': 'recovered'}
-                ],
-                value='confirmed',
-            ),
-            dcc.RangeSlider(
-                id='dates-range-slider',
-                min=0,
-                max=len(covid19.get_dates()) - 1,
-                marks={
-                    i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
-                    for i, x in enumerate(covid19.get_dates()) if i % 5 == 0
-                },
-                value=[0, len(covid19.get_dates()) - 1],
-            )
+def serve_layout():
+    session_id = str(uuid.uuid4())
+
+    return html.Div(className="layout", children=[
+        html.Div(session_id, id='session-id', style={'display': 'none'}),
+
+        html.Div(className="row", style={'backgroundColor': colors['background']}, children=[
+            html.Div(className="twelwe columns", style={'backgroundColor': colors['background']}, children=[
+                dcc.Dropdown(
+                    id='country-dropdown',
+                    options=[
+                        {'label': covid19.countries_map[x[0]], 'value': x[0]}
+                        for x in covid19.latest_total[::-1]
+                    ],
+                    # value=[x[0] for x in covid19.latest_top[-5:]],
+                    multi=True
+                ),
+                dcc.RadioItems(
+                    id='type-radio',
+                    className='radio-buttons',
+                    options=[
+                        {'label': 'Confirmed', 'value': 'confirmed'},
+                        {'label': 'Died', 'value': 'deaths'},
+                        # {'label': 'Recovered', 'value': 'recovered'}
+                    ],
+                    value='confirmed',
+                ),
+                dcc.RangeSlider(
+                    id='dates-range-slider',
+                    min=0,
+                    max=len(covid19.get_dates()) - 1,
+                    marks={
+                        i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
+                        for i, x in enumerate(covid19.get_dates()) if i % 5 == 0
+                    },
+                    value=[0, len(covid19.get_dates()) - 1],
+                )
+            ]),
         ]),
-    ]),
 
-    html.Div(className="row", children=[
-        html.Div(
-            id='by-country-container',
-            className="six columns",
-            style={'backgroundColor': colors['background']},
-            children=[]
-        ),
-    ]),
+        html.Div(className="row", children=[
+            html.Div(
+                id='by-country-container',
+                className="six columns",
+                style={'backgroundColor': colors['background']},
+                children=[]
+            ),
+        ]),
 
-    html.Div(className="row", children=[
-        html.Div(
-            id='new-by-country-container',
-            className="six columns",
-            style={'backgroundColor': colors['background']},
-            children=[]
-        ),
-    ]),
+        html.Div(className="row", children=[
+            html.Div(
+                id='new-by-country-container',
+                className="six columns",
+                style={'backgroundColor': colors['background']},
+                children=[]
+            ),
+        ]),
 
-    html.Div(className="row", children=[
-        html.Div(
-            id='rates-progress-by-country-container',
-            className="six columns",
-            style={'backgroundColor': colors['background']},
-            children=[]
-        ),
-    ]),
-])
+        html.Div(className="row", children=[
+            html.Div(
+                id='rates-progress-by-country-container',
+                className="six columns",
+                style={'backgroundColor': colors['background']},
+                children=[]
+            ),
+        ]),
+    ])
+
+
+app.layout = serve_layout
 
 
 @app.callback(
-    Output('country-dropdown', 'options'),
-    [Input('country-dropdown', 'value')])
-def set_countries_options(countries):
-    log.debug(',,,,,,,,,,,,,,,,,,,,,, UPDATING OPTIONS')
-    return [
-        {'label': covid19.countries_map[x[0]], 'value': x[0]}
-        for x in covid19.latest_total[::-1]
-    ]
+    Output('country-dropdown', 'value'),
+    [Input('country-dropdown', 'options')])
+def set_countries_value(countries):
+    log.debug(',,,,,,,,,,,,,,,,,,,,,, UPDATING VALUE')
+
+    user_countries_str = request.cookies.get('countries', '')
+    if user_countries_str:
+        return user_countries_str.split(',')
+
+    return [x[0] for x in covid19.latest_top[-5:]]
 
 
 @app.callback(
@@ -112,6 +124,7 @@ def set_countries_options(countries):
     [Input('country-dropdown', 'value')])
 def set_date_range_max(countries):
     log.debug('!!!!!!!!!!!!!!!!!!! UPDATING MAX')
+    dash.callback_context.response.set_cookie('countries', ','.join(countries))
     return len(covid19.get_dates()) - 1
 
 @app.callback(
@@ -138,6 +151,8 @@ def set_date_range_value(countries):
      Input('type-radio', 'value'),
      Input('dates-range-slider', 'value')])
 def update_total_stats_graph(countries, _type, dates_range):
+    print('======> ....zzzzzzzzzzzzzz', countries, _type, dates_range)
+
     country_total = covid19.get_history_data(
         countries=countries,
         _type=_type,
