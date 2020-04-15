@@ -21,10 +21,35 @@ covid19 = Covid19Data()
 
 external_stylesheets = [
     # 'https://codepen.io/chriddyp/pen/bWLwgP.css',
-    'https://codepen.io/kgantsov/pen/jOPROez.css?v=3'
+    'https://codepen.io/kgantsov/pen/jOPROez.css?v=4'
 ]
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+class MyDash(dash.Dash):
+    pass
+    def interpolate_index(self, **kwargs):
+        return '''<!DOCTYPE html>
+            <html>
+                <head>
+                    <title>COVID-19 Stats</title>
+                    <meta name="viewport" content="width=device-width,initial-scale=1">
+                    {css}
+                </head>
+                <body>
+                    {app_entry}
+                    {config}
+                    {scripts}
+                    {renderer}
+                </body>
+            </html>'''.format(
+                css=kwargs.get('css'),
+                app_entry=kwargs.get('app_entry'),
+                config=kwargs.get('config'),
+                scripts=kwargs.get('scripts'),
+                renderer=kwargs.get('renderer')
+            )
+
+
+app = MyDash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
@@ -35,11 +60,7 @@ colors = {
 
 
 def serve_layout():
-    session_id = str(uuid.uuid4())
-
     return html.Div(className="layout", children=[
-        html.Div(session_id, id='session-id', style={'display': 'none'}),
-
         html.Div(className="row", style={'backgroundColor': colors['background']}, children=[
             html.Div(className="twelwe columns", style={'backgroundColor': colors['background']}, children=[
                 dcc.Dropdown(
@@ -67,9 +88,9 @@ def serve_layout():
                     max=len(covid19.get_dates()) - 1,
                     marks={
                         i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
-                        for i, x in enumerate(covid19.get_dates()) if i % 5 == 0
+                        for i, x in enumerate(covid19.get_dates()) if i % 20 == 0
                     },
-                    value=[0, len(covid19.get_dates()) - 1],
+                    value=[len(covid19.get_dates()) - 30, len(covid19.get_dates()) - 1],
                 )
             ]),
         ]),
@@ -110,8 +131,6 @@ app.layout = serve_layout
     Output('country-dropdown', 'value'),
     [Input('country-dropdown', 'options')])
 def set_countries_value(countries):
-    log.debug(',,,,,,,,,,,,,,,,,,,,,, UPDATING VALUE')
-
     user_countries_str = request.cookies.get('countries', '')
     if user_countries_str:
         return user_countries_str.split(',')
@@ -123,7 +142,6 @@ def set_countries_value(countries):
     Output('dates-range-slider', 'max'),
     [Input('country-dropdown', 'value')])
 def set_date_range_max(countries):
-    log.debug('!!!!!!!!!!!!!!!!!!! UPDATING MAX')
     dash.callback_context.response.set_cookie('countries', ','.join(countries))
     return len(covid19.get_dates()) - 1
 
@@ -131,18 +149,16 @@ def set_date_range_max(countries):
     Output('dates-range-slider', 'marks'),
     [Input('country-dropdown', 'value')])
 def set_date_range_marks(countries):
-    log.debug('§§§§§§§§§§§§§§§§§§§ UPDATING MARKS')
     return {
         i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
-        for i, x in enumerate(covid19.get_dates()) if i % 5 == 0
+        for i, x in enumerate(covid19.get_dates()) if i % 20 == 0
     }
 
 @app.callback(
     Output('dates-range-slider', 'value'),
     [Input('country-dropdown', 'value')])
 def set_date_range_value(countries):
-    log.debug('@@@@@@@@@@@@@@@@@@@ UPDATING VALUE')
-    return [0, len(covid19.get_dates()) - 1]
+    return [len(covid19.get_dates()) - 31, len(covid19.get_dates()) - 1]
 
 
 @app.callback(
@@ -151,8 +167,6 @@ def set_date_range_value(countries):
      Input('type-radio', 'value'),
      Input('dates-range-slider', 'value')])
 def update_total_stats_graph(countries, _type, dates_range):
-    print('======> ....zzzzzzzzzzzzzz', countries, _type, dates_range)
-
     country_total = covid19.get_history_data(
         countries=countries,
         _type=_type,
@@ -199,6 +213,7 @@ def update_total_stats_graph(countries, _type, dates_range):
                     # 'yaxis': {'title': _type.title() if _type else ''},
                     # 'yaxis': {'title': 'Sick people', 'type': 'log'},
                     # 'yaxis': {'title': },
+                    'legend': {'x': 0, 'y': -0.4, 'orientation': 'h'},
                     'plot_bgcolor': colors['background'],
                     'paper_bgcolor': colors['background'],
                     'font': {
@@ -262,6 +277,7 @@ def update_new_stats_graph(countries, _type, dates_range):
                     # 'yaxis': {'title': _type.title() if _type else ''},
                     # 'yaxis': {'title': 'Sick people', 'type': 'log'},
                     # 'yaxis': {'title': },
+                    'legend': {'x': 0, 'y': -0.4, 'orientation': 'h'},
                     'plot_bgcolor': colors['background'],
                     'paper_bgcolor': colors['background'],
                     'font': {
@@ -325,6 +341,7 @@ def update_rates_progress__stats_graph(countries, _type, dates_range):
                     # 'yaxis': {'title': _type.title() if _type else ''},
                     # 'yaxis': {'title': 'Sick people', 'type': 'log'},
                     # 'yaxis': {'title': },
+                    'legend': {'x': 0, 'y': -0.4, 'orientation': 'h'},
                     'plot_bgcolor': colors['background'],
                     'paper_bgcolor': colors['background'],
                     'font': {
