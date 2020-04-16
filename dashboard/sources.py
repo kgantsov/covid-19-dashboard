@@ -14,8 +14,6 @@ log = logging.getLogger(__name__)
 
 class Covid19Data:
     def __init__(self):
-        self.total = defaultdict(lambda: defaultdict(int))
-
         self._last_time_updated = 0
         self._update_every = 600
         self.covid19 = COVID19Py.COVID19(url='http://api:8051')
@@ -30,8 +28,10 @@ class Covid19Data:
             x['abbreviation']: x['country']
             for x in json.load(open('country-by-abbreviation.json'))
         }
-    
+
     def process_data(self):
+        self.total = defaultdict(lambda: defaultdict(int))
+
         self.countries_map = {}
         self.locations_map = {x['country_code']:x for x in self.locations}
 
@@ -41,7 +41,7 @@ class Covid19Data:
             self.total[location['country_code']]['confirmed'] += location['latest']['confirmed']
             self.total[location['country_code']]['deaths'] += location['latest']['deaths']
             self.total[location['country_code']]['recovered'] += location['latest']['recovered']
-        
+
         self.latest_total = sorted(self.total.items(), key=lambda x: x[1]['confirmed'])
         self.latest_top = self.latest_total[-20:]
 
