@@ -1,6 +1,7 @@
 import logging
 import sys
 import uuid
+import os
 from collections import defaultdict
 from datetime import datetime
 
@@ -23,33 +24,47 @@ external_stylesheets = [
     # 'https://codepen.io/chriddyp/pen/bWLwgP.css',
     'https://codepen.io/kgantsov/pen/jOPROez.css?v=4'
 ]
+google_analytics_id = os.environ.get('GOOGLE_ANALYTICS_ID')
+if google_analytics_id:
+    external_scripts = [f'https://www.googletagmanager.com/gtag/js?id={google_analytics_id}']
+else:
+    external_scripts = []
+
 
 class MyDash(dash.Dash):
-    pass
     def interpolate_index(self, **kwargs):
-        return '''<!DOCTYPE html>
+        return """<!DOCTYPE html>
             <html>
                 <head>
+                     <!-- Global site tag (gtag.js) - Google Analytics -->
+                    <script>
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag(){dataLayer.push(arguments);}
+                        gtag('js', new Date());
+
+                        gtag('config', '%(google_analytics_id)s');
+                    </script>
                     <title>COVID-19 Stats</title>
                     <meta name="viewport" content="width=device-width,initial-scale=1">
-                    {css}
+                    %(css)s
                 </head>
                 <body>
-                    {app_entry}
-                    {config}
-                    {scripts}
-                    {renderer}
+                    %(app_entry)s
+                    %(config)s
+                    %(scripts)s
+                    %(renderer)s
                 </body>
-            </html>'''.format(
+            </html>""" % dict(
                 css=kwargs.get('css'),
                 app_entry=kwargs.get('app_entry'),
                 config=kwargs.get('config'),
                 scripts=kwargs.get('scripts'),
-                renderer=kwargs.get('renderer')
+                renderer=kwargs.get('renderer'),
+                google_analytics_id=google_analytics_id
             )
 
 
-app = MyDash(__name__, external_stylesheets=external_stylesheets)
+app = MyDash(__name__, external_stylesheets=external_stylesheets, external_scripts=external_scripts)
 
 server = app.server
 
