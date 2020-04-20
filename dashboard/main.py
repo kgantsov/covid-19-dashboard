@@ -182,21 +182,21 @@ def update_total_stats_graph(countries, _type, dates_range):
         help_text = 'fully recovered from COVID-19'
 
     return [
-        html.H1(
-            children=f'Total {_type.title()} cases',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
+        # html.H1(
+        #     children=f'Total {_type.title()} cases',
+        #     style={
+        #         'textAlign': 'center',
+        #         'color': colors['text']
+        #     }
+        # ),
 
-        html.Div(
-            children=f'Total number of people that {help_text} since the start',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
+        # html.Div(
+        #     children=f'Total number of people that {help_text} since the start',
+        #     style={
+        #         'textAlign': 'center',
+        #         'color': colors['text']
+        #     }
+        # ),
 
         dcc.Graph(
             id='by-country',
@@ -213,6 +213,7 @@ def update_total_stats_graph(countries, _type, dates_range):
                     # 'yaxis': {'title': _type.title() if _type else ''},
                     # 'yaxis': {'title': 'Sick people', 'type': 'log'},
                     # 'yaxis': {'title': },
+                    'title': f'COVID-19: Total {_type} cases',
                     'legend': {'x': 0, 'y': -0.4, 'orientation': 'h'},
                     'plot_bgcolor': colors['background'],
                     'paper_bgcolor': colors['background'],
@@ -246,21 +247,21 @@ def update_new_stats_graph(countries, _type, dates_range):
         help_text = 'fully recovered from COVID-19'
 
     return [
-        html.H1(
-            children=f'New {_type} cases',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
+        # html.H1(
+        #     children=f'New {_type} cases',
+        #     style={
+        #         'textAlign': 'center',
+        #         'color': colors['text']
+        #     }
+        # ),
 
-        html.Div(
-            children=f'Number of people that {help_text} on a specific day',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
+        # html.Div(
+        #     children=f'Number of people that {help_text} on a specific day',
+        #     style={
+        #         'textAlign': 'center',
+        #         'color': colors['text']
+        #     }
+        # ),
 
         dcc.Graph(
             id='new-by-country',
@@ -277,6 +278,7 @@ def update_new_stats_graph(countries, _type, dates_range):
                     # 'yaxis': {'title': _type.title() if _type else ''},
                     # 'yaxis': {'title': 'Sick people', 'type': 'log'},
                     # 'yaxis': {'title': },
+                    'title': f'COVID-19: New {_type} cases',
                     'legend': {'x': 0, 'y': -0.4, 'orientation': 'h'},
                     'plot_bgcolor': colors['background'],
                     'paper_bgcolor': colors['background'],
@@ -310,21 +312,21 @@ def update_rates_progress__stats_graph(countries, _type, dates_range):
         help_text = 'fully recovered from COVID-19'
 
     return [
-        html.H1(
-            children=f'{_type.title()} rate by date',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
+        # html.H1(
+        #     children=f'{_type.title()} rate by date',
+        #     style={
+        #         'textAlign': 'center',
+        #         'color': colors['text']
+        #     }
+        # ),
 
-        html.Div(
-            children=f'Number of people that {help_text} per 1 million people on a specific day',
-            style={
-                'textAlign': 'center',
-                'color': colors['text']
-            }
-        ),
+        # html.Div(
+        #     children=f'Number of people that {help_text} per 1 million people on a specific day',
+        #     style={
+        #         'textAlign': 'center',
+        #         'color': colors['text']
+        #     }
+        # ),
 
         dcc.Graph(
             id='rates-progress-by-country',
@@ -341,6 +343,7 @@ def update_rates_progress__stats_graph(countries, _type, dates_range):
                     # 'yaxis': {'title': _type.title() if _type else ''},
                     # 'yaxis': {'title': 'Sick people', 'type': 'log'},
                     # 'yaxis': {'title': },
+                    'title': f'COVID-19: {_type.title()} per million people',
                     'legend': {'x': 0, 'y': -0.4, 'orientation': 'h'},
                     'plot_bgcolor': colors['background'],
                     'paper_bgcolor': colors['background'],
