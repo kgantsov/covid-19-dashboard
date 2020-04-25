@@ -173,7 +173,7 @@ def set_date_range_marks(countries):
     Output('dates-range-slider', 'value'),
     [Input('country-dropdown', 'value')])
 def set_date_range_value(countries):
-    return [len(covid19.get_dates()) - 31, len(covid19.get_dates()) - 1]
+    return [len(covid19.get_dates()) - 61, len(covid19.get_dates()) - 1]
 
 
 @app.callback(
