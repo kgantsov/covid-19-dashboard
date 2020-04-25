@@ -105,7 +105,7 @@ def serve_layout():
                         i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
                         for i, x in enumerate(covid19.get_dates()) if i % 20 == 0
                     },
-                    value=[len(covid19.get_dates()) - 30, len(covid19.get_dates()) - 1],
+                    value=[len(covid19.get_dates()) - 60, len(covid19.get_dates()) - 1],
                 )
             ]),
         ]),
