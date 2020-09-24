@@ -20,10 +20,14 @@ log = logging.getLogger(__name__)
 
 covid19 = Covid19Data()
 
+
+
 external_stylesheets = [
     # 'https://codepen.io/chriddyp/pen/bWLwgP.css',
-    'https://gist.githubusercontent.com/kgantsov/cd2985e4126dfe275946db59c5c2cb23/raw/6aa3c769fd76862bc623ba742284a94d48d90328/style.css?v=4'
+    #'https://gist.githubusercontent.com/kgantsov/cd2985e4126dfe275946db59c5c2cb23/raw/6aa3c769fd76862bc623ba742284a94d48d90328/style.css?v=4'
+    '/assets/styles.css'
 ]
+
 google_analytics_id = os.environ.get('GOOGLE_ANALYTICS_ID')
 if google_analytics_id:
     external_scripts = [f'https://www.googletagmanager.com/gtag/js?id={google_analytics_id}']
