@@ -4,6 +4,7 @@ import uuid
 import os
 from collections import defaultdict
 from datetime import datetime
+from flask import jsonify
 
 
 import dash
@@ -373,6 +374,13 @@ def update_rates_progress__stats_graph(countries, _type, dates_range):
             }
         ),
     ]
+
+
+@app.server.route("/dates/")
+def get_dates():
+    dates = covid19.get_dates()
+    return jsonify(dates)
+
 
 if __name__ == '__main__':
     # http://coronavirus-tracker-api.herokuapp.com/v2/locations?country_code=UA&timelines=true
