@@ -14,7 +14,7 @@ services:
 
   dashboard:
     build: ./dashboard
-    command: gunicorn --bind 0.0.0.0:8050 main:server
+    command: gunicorn --workers=2 --bind 0.0.0.0:8050 main:server
     depends_on:
       - api
     networks:
