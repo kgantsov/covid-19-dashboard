@@ -376,10 +376,10 @@ def update_rates_progress__stats_graph(countries, _type, dates_range):
     ]
 
 
-@app.server.route("/dates/")
+@app.server.route("/refresh/")
 def get_dates():
-    dates = covid19.get_dates()
-    return jsonify(dates)
+    covid19.refresh_data(force=True)
+    return jsonify({'status': 'ok'})
 
 
 if __name__ == '__main__':

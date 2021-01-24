@@ -16,6 +16,7 @@ class Covid19Data:
     def __init__(self):
         self._last_time_updated = 0
         self._update_every = 600
+        # self.covid19 = COVID19Py.COVID19(url='http://c19-stats.ml:8051')
         self.covid19 = COVID19Py.COVID19(url='http://api:8051')
 
         self.refresh_data()
@@ -48,10 +49,10 @@ class Covid19Data:
         self.dates = list(self.locations_map['US']['timelines']['confirmed']['timeline'].keys())
 
 
-    def refresh_data(self):
+    def refresh_data(self, force=False):
         last_time_updated = time.time() - self._last_time_updated
 
-        if last_time_updated > self._update_every:
+        if last_time_updated > self._update_every or force:
             log.debug('=====> LAST UPDATED %s seconds ago. Checking again...', last_time_updated)
             self.latest = self.covid19.getLatest()
             self.locations = self.covid19.getLocations(timelines=True)
