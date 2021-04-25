@@ -80,6 +80,7 @@ colors = {
 
 
 def serve_layout():
+    dates = covid19.get_dates()
     return html.Div(className="layout", children=[
         html.Div(className="row", style={'backgroundColor': colors['background']}, children=[
             html.Div(className="twelwe columns", style={'backgroundColor': colors['background']}, children=[
@@ -108,7 +109,7 @@ def serve_layout():
                     max=len(covid19.get_dates()) - 1,
                     marks={
                         i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
-                        for i, x in enumerate(covid19.get_dates()) if i % 20 == 0
+                        for i, x in enumerate(dates) if i % int(len(dates) / 10) == 0
                     },
                     value=[len(covid19.get_dates()) - 60, len(covid19.get_dates()) - 1],
                 )
@@ -169,9 +170,10 @@ def set_date_range_max(countries):
     Output('dates-range-slider', 'marks'),
     [Input('country-dropdown', 'value')])
 def set_date_range_marks(countries):
+    dates = covid19.get_dates()
     return {
         i: datetime.strptime(x, '%Y-%m-%dT%H:%M:%S%z').strftime('%b %-d')
-        for i, x in enumerate(covid19.get_dates()) if i % 20 == 0
+        for i, x in enumerate(dates) if i % int(len(dates) / 10) == 0
     }
 
 @app.callback(
