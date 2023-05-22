@@ -1,4 +1,4 @@
 COVID19Py==0.3.0
 dash==1.10.0
-requests==2.23.0
+requests==2.31.0
 gunicorn==20.0.4
